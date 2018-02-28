@@ -4,8 +4,11 @@ endif
 
 .PHONY:	all versiontest
 
+# target for non-PG based containers
+non-pg-images:    dbaserver grafana prometheus promgateway vac
+
 # Default target
-all:    backup backrestrestore collectserver dbaserver grafana pgadmin4 pgbadger pgbouncer pgdump pgpool pgrestore postgres postgres-gis prometheus promgateway upgrade vac
+all:    backup backrestrestore collectserver dbaserver-tag grafana-tag pgadmin4 pgbadger pgbouncer pgdump pgpool pgrestore postgres postgres-gis prometheus-tag promgateway-tag upgrade vac-tag
 
 versiontest:
 ifndef CCP_BASEOS
@@ -57,10 +60,13 @@ dbaserver:
 	cd dba && godep go install dbaserver.go
 	cp $(GOBIN)/dbaserver bin/dba
 	docker build -t crunchy-dba -f $(CCP_BASEOS)/Dockerfile.dba.$(CCP_BASEOS) .
+dbaserver-tag:
 	docker tag crunchy-dba crunchydata/crunchy-dba:$(CCP_BASEOS)-$(CCP_PG_FULLVERSION)-$(CCP_VERSION)
 
 grafana: versiontest
 	docker build -t crunchy-grafana -f $(CCP_BASEOS)/Dockerfile.grafana.$(CCP_BASEOS) .
+	docker tag crunchy-grafana crunchydata/crunchy-grafana:$(CCP_BASEOS)-$(CCP_VERSION)
+grafana-tag: versiontest
 	docker tag crunchy-grafana crunchydata/crunchy-grafana:$(CCP_BASEOS)-$(CCP_PG_FULLVERSION)-$(CCP_VERSION)
 
 pgadmin4: versiontest
@@ -113,10 +119,14 @@ postgres-gis: versiontest
 
 prometheus:	versiontest
 	docker build -t crunchy-prometheus -f $(CCP_BASEOS)/Dockerfile.prometheus.$(CCP_BASEOS) .
+	docker tag crunchy-prometheus crunchydata/crunchy-prometheus:$(CCP_BASEOS)-$(CCP_VERSION)
+prometheus-tag:	versiontest
 	docker tag crunchy-prometheus crunchydata/crunchy-prometheus:$(CCP_BASEOS)-$(CCP_PG_FULLVERSION)-$(CCP_VERSION)
 
 promgateway: versiontest
 	docker build -t crunchy-promgateway -f $(CCP_BASEOS)/Dockerfile.promgateway.$(CCP_BASEOS) .
+	docker tag crunchy-promgateway crunchydata/crunchy-promgateway:$(CCP_BASEOS)-$(CCP_VERSION)
+promgateway-tag: versiontest
 	docker tag crunchy-promgateway crunchydata/crunchy-promgateway:$(CCP_BASEOS)-$(CCP_PG_FULLVERSION)-$(CCP_VERSION)
 
 upgrade: versiontest
@@ -129,6 +139,8 @@ vac: versiontest
 	cd vacuum && godep go install vacuum.go
 	cp $(GOBIN)/vacuum bin/vacuum
 	docker build -t crunchy-vacuum -f $(CCP_BASEOS)/Dockerfile.vacuum.$(CCP_BASEOS) .
+	docker tag crunchy-vacuum crunchydata/crunchy-vacuum:$(CCP_BASEOS)-$(CCP_VERSION)
+vac-tag: versiontest
 	docker tag crunchy-vacuum crunchydata/crunchy-vacuum:$(CCP_BASEOS)-$(CCP_PG_FULLVERSION)-$(CCP_VERSION)
 
 version:
