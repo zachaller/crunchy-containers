@@ -59,7 +59,7 @@ collect: versiontest
 	docker tag crunchy-collect $(CCP_IMAGE_PREFIX)/crunchy-collect:$(CCP_BASEOS)-$(CCP_PG_FULLVERSION)-$(CCP_VERSION)
 
 dbaserver:  
-	cp `which oc` bin/dba
+#	cp `which oc` bin/dba
 	cp `which kubectl` bin/dba
 	cd dba && godep go install dbaserver.go
 	cp $(GOBIN)/dbaserver bin/dba

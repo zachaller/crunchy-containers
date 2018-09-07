@@ -28,10 +28,31 @@ RUN yum -y update \
     openssh-server \
     procps-ng  \
     rsync \
- && yum -y install postgresql10-server postgresql10-contrib postgresql10 \
+ && yum -y install postgresql10-server postgresql10-contrib postgresql10 postgresql10-devel postgresql-devel \
     pgaudit12_10 \
     pgbackrest \
+    git \
+    wget \
  && yum -y clean all
+
+RUN yum -y groupinstall "Development Tools"
+
+RUN yum remove cmake -y \
+ && wget https://cmake.org/files/v3.6/cmake-3.6.2.tar.gz \
+ && tar -zxvf cmake-3.6.2.tar.gz \
+ && cd cmake-3.6.2 \
+ && ./bootstrap --prefix=/usr/local \
+ && make \
+ && make install
+
+RUN ln -s /usr/pgsql-10/bin/pg_config /usr/sbin/pg_config
+
+RUN git clone https://github.com/timescale/timescaledb.git \
+ && cd timescaledb \
+ && ./bootstrap \
+ && cd build && make \ 
+ && make install \
+ && cd ../../
 
 ENV PGROOT="/usr/pgsql-${PGVERSION}"
 
