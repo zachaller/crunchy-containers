@@ -21,7 +21,7 @@ NODE_EXPORTER_VERSION=0.16.0
 MERCURIAL_RPM='https://www.mercurial-scm.org/release/centos7/RPMS/x86_64/mercurial-4.6.1-1.x86_64.rpm'
 PGMONITOR_COMMIT='dffb2b5eb04ba13ee47ae81950410738d15e8c76'
 
-sudo yum -y install net-tools bind-utils wget unzip git
+#sudo yum -y install net-tools bind-utils wget unzip git
 
 #
 # download the metrics products, only required to build the containers
